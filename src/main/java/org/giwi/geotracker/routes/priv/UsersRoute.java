@@ -1,6 +1,5 @@
 package org.giwi.geotracker.routes.priv;
 
-import com.google.inject.Inject;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -12,6 +11,8 @@ import org.giwi.geotracker.beans.AuthUtils;
 import org.giwi.geotracker.beans.ResponseUtils;
 import org.giwi.geotracker.exception.BusinessException;
 import org.giwi.geotracker.services.UserService;
+
+import javax.inject.Inject;
 
 /**
  * The type Users route.

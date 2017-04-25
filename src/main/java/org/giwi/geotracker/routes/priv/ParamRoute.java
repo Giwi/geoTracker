@@ -1,14 +1,15 @@
 package org.giwi.geotracker.routes.priv;
 
-import com.google.inject.Inject;
 import io.vertx.core.Vertx;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 import org.giwi.geotracker.annotation.VertxRoute;
-import org.giwi.geotracker.beans.ResponseUtils;
+import org.giwi.geotracker.beans.AuthUtils;
 import org.giwi.geotracker.exception.BusinessException;
 import org.giwi.geotracker.services.ParamService;
+
+import javax.inject.Inject;
 
 /**
  * The type Param route.
@@ -16,9 +17,9 @@ import org.giwi.geotracker.services.ParamService;
 @VertxRoute(rootPath = "/api/1/private/param")
 public class ParamRoute implements VertxRoute.Route {
     @Inject
-    private ResponseUtils responseUtils;
-    @Inject
     private ParamService paramService;
+    @Inject
+    private AuthUtils authUtils;
 
     /**
      * Init router.

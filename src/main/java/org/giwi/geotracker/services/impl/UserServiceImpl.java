@@ -1,24 +1,25 @@
 package org.giwi.geotracker.services.impl;
 
-import com.google.inject.Inject;
 import com.mongodb.MongoWriteException;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.auth.jwt.JWTOptions;
 import io.vertx.ext.auth.mongo.MongoAuth;
 import io.vertx.ext.mongo.MongoClient;
 import org.giwi.geotracker.annotation.ProxyService;
+import org.giwi.geotracker.beans.AuthUtils;
 import org.giwi.geotracker.beans.Utils;
 import org.giwi.geotracker.constants.Roles;
 import org.giwi.geotracker.exception.BusinessException;
 import org.giwi.geotracker.services.UserService;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * The type Client service.
@@ -32,6 +33,8 @@ public class UserServiceImpl implements UserService {
     private MongoAuth mongoAuth;
     @Inject
     private Utils utils;
+    @Inject
+    private AuthUtils authUtils;
 
     /**
      * Instantiates a new Client service.
@@ -101,25 +104,9 @@ public class UserServiceImpl implements UserService {
     public void login(JsonObject query, Handler<AsyncResult<JsonObject>> resultHandler) {
         mongoAuth.authenticate(query, res -> {
             if (res.succeeded()) {
-                JsonObject secureToken = new JsonObject()
-                        .put("token", UUID.randomUUID().toString())
-                        .put("timestamp", System.currentTimeMillis());
-
-                JsonObject response = new JsonObject()
-                        .put("secureToken", secureToken.getString("token"))
-                        .put("status", true);
-
                 getUser(new JsonObject().put("_id", res.result().principal().getString("_id")), mongoRes -> {
                     if (mongoRes.succeeded() && mongoRes.result() != null) {
-                        JsonObject u = mongoRes.result();
-                        u.put("secureToken", secureToken);
-                        updateUser(u, saveRes -> {
-                            if (saveRes.succeeded()) {
-                                resultHandler.handle(Future.succeededFuture(response));
-                            } else {
-                                resultHandler.handle(Future.failedFuture(new BusinessException(saveRes.cause(), 401)));
-                            }
-                        });
+                        resultHandler.handle(Future.succeededFuture(new JsonObject().put("token", authUtils.getAuthProvider().generateToken(mongoRes.result(), new JWTOptions()))));
                     } else {
                         resultHandler.handle(Future.failedFuture(new BusinessException(mongoRes.cause(), 401)));
                     }

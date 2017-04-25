@@ -4,6 +4,7 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.auth.jwt.JWTAuth;
 
 /**
  * The interface Auth utils.
@@ -41,5 +42,12 @@ public interface AuthUtils {
      * @param resultHandler the result handler
      */
     void getUserFromClient(JsonObject user, Handler<AsyncResult<JsonObject>> resultHandler);
+
+    /**
+     * Gets auth provider.
+     *
+     * @return the auth provider
+     */
+    JWTAuth getAuthProvider();
 
 }

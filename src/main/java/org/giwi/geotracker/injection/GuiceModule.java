@@ -4,8 +4,6 @@ import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
-import io.vertx.core.logging.Logger;
-import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.auth.mongo.MongoAuth;
 import io.vertx.ext.mongo.MongoClient;
 import org.giwi.geotracker.beans.AuthUtils;
@@ -21,7 +19,6 @@ import org.giwi.geotracker.services.UserService;
  * The type Guice module.
  */
 public class GuiceModule extends AbstractModule {
-    private static final Logger LOG = LoggerFactory.getLogger(GuiceModule.class.getName());
     private JsonObject config;
     private Vertx vertx;
 

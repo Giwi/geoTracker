@@ -1,13 +1,15 @@
 package org.giwi.geotracker.routes.pub;
 
-import com.google.inject.Inject;
 import io.vertx.core.Vertx;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import org.giwi.geotracker.annotation.VertxRoute;
+import org.giwi.geotracker.beans.AuthUtils;
 import org.giwi.geotracker.beans.ResponseUtils;
 import org.giwi.geotracker.exception.BusinessException;
 import org.giwi.geotracker.services.UserService;
+
+import javax.inject.Inject;
 
 /**
  * The type Users route.
@@ -19,6 +21,8 @@ public class UsersRoute implements VertxRoute.Route {
     private ResponseUtils responseUtils;
     @Inject
     private UserService userService;
+    @Inject
+    private AuthUtils authUtils;
 
     @Override
     public Router init(Vertx vertx) {

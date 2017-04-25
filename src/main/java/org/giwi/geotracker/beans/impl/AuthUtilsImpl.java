@@ -1,13 +1,14 @@
 package org.giwi.geotracker.beans.impl;
 
-import com.google.inject.Inject;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
+import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
+import io.vertx.ext.auth.jwt.JWTAuth;
 import io.vertx.ext.auth.mongo.MongoAuth;
 import io.vertx.ext.mongo.MongoClient;
 import org.apache.commons.lang3.StringUtils;
@@ -15,21 +16,19 @@ import org.giwi.geotracker.beans.AuthUtils;
 import org.giwi.geotracker.exception.BusinessException;
 import org.giwi.geotracker.services.UserService;
 
+import javax.inject.Inject;
+
 /**
  * The type Auth utils.
  */
 public class AuthUtilsImpl implements AuthUtils {
     private static final Logger LOG = LoggerFactory.getLogger(AuthUtils.class.getName());
-    /**
-     * The Mongo client.
-     */
     @Inject
-    MongoClient mongoClient;
-    /**
-     * The Mongo auth.
-     */
+    private MongoClient mongoClient;
     @Inject
-    MongoAuth mongoAuth;
+    private MongoAuth mongoAuth;
+    @Inject
+    private Vertx vertx;
 
     @Override
     public void getClientFromToken(HttpServerRequest req, Handler<AsyncResult<JsonObject>> resultHandler) {
@@ -50,7 +49,7 @@ public class AuthUtilsImpl implements AuthUtils {
 
     @Override
     public void testValidity(JsonObject client, Handler<AsyncResult<JsonObject>> resultHandler) {
-        if(client == null || !client.containsKey("secureToken")) {
+        if (client == null || !client.containsKey("secureToken")) {
             resultHandler.handle(Future.failedFuture(new BusinessException("No data", 401)));
         } else if (DEFAULT_SESSION_TIMEOUT < System.currentTimeMillis() - client.getJsonObject("secureToken").getLong("timestamp", 0L)) {
             client.remove("secureToken");
@@ -72,5 +71,18 @@ public class AuthUtilsImpl implements AuthUtils {
         mongoClient.findOne(mongoAuth.getCollectionName(),
                 new JsonObject().put("_id", user.getString("_id")),
                 new JsonObject(), resultHandler);
+    }
+
+    /**
+     * Gets auth config.
+     *
+     * @return the auth config
+     */
+    @Override
+    public JWTAuth getAuthProvider() {
+        return JWTAuth.create(vertx, new JsonObject().put("keyStore", new JsonObject()
+                .put("type", "jceks")
+                .put("path", "keystore.jceks")
+                .put("password", "secret")));
     }
 }
