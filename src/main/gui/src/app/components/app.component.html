@@ -1,0 +1,82 @@
+<nav class="navbar navbar-toggleable-md navbar-inverse bg-primary">
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+            (click)="isCollapsed = !isCollapsed"
+            data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+            aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <a class="navbar-brand" href="#">Geotracker</a>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent" [ngbCollapse]="isCollapsed">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item" routerLinkActive="active" *ngIf="logged">
+                <a class="nav-link" href="#/admin" (click)="isCollapsed =true"><i class="fa fa-cogs fa-fw"
+                                                                                  aria-hidden="true"></i>
+                    Administration</a>
+            </li>
+            <li class="nav-item" *ngIf="logged">
+                <h5><i class="fa fa-user fa-fw" aria-hidden="true"></i>
+                    {{user.firstname}} {{user.name}}</h5>
+            </li>
+            <li class="nav-item" routerLinkActive="active" *ngIf="!logged">
+                <a class="nav-link" href="#/signup" (click)="isCollapsed =true">
+                    <i class="fa fa-rocket fa-fw" aria-hidden="true"></i> Signup</a>
+            </li>
+            <li class="nav-item" routerLinkActive="active" *ngIf="!logged">
+                <a class="nav-link" href="#/login" (click)="isCollapsed =true">
+                    <i class="fa fa-sign-in fa-fw" aria-hidden="true"></i>
+                    Login</a>
+            </li>
+            <li class="nav-item" routerLinkActive="active" *ngIf="logged">
+                <a class="nav-link" href="#" (click)="logout()">
+                    <i class="fa fa-sign-out fa-fw" aria-hidden="true"></i>
+                    Logout</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+<!--
+<nav class="navbar navbar-toggleable-md navbar-fixed-top navbar-dark bg-primary bg-faded">
+    <a class="navbar-brand" href="#">Geotracker</a>
+    <button class="navbar-toggler hidden-md-up float-xs-right" type="button" (click)="isCollapsed = !isCollapsed"
+            aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"></button>
+    <div class="collapse navbar-collapse" [ngbCollapse]="isCollapsed">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item" routerLinkActive="active" *ngIf="logged">
+                <a class="nav-link" href="#/baab" (click)="isCollapsed =true">
+                    <i class="fa fa-list fa-fw" aria-hidden="true"></i>
+                    Liste des Baabs</a>
+            </li>
+            <li class="nav-item" routerLinkActive="active" *ngIf="logged">
+                <a class="nav-link" href="#/admin" (click)="isCollapsed =true">
+                    <i class="fa fa-cogs fa-fw" aria-hidden="true"></i>
+                    Administration</a>
+            </li>
+
+            <li class="nav-item" *ngIf="logged">
+                <h5><i class="fa fa-user fa-fw" aria-hidden="true"></i>
+                    {{user.firstname}} {{user.name}}</h5>
+            </li>
+
+            <li class="nav-item" routerLinkActive="active" *ngIf="!logged">
+                <a class="nav-link" href="#/signup" (click)="isCollapsed =true">
+                    <i class="fa fa-rocket fa-fw" aria-hidden="true"></i> Signup</a>
+            </li>
+            <li class="nav-item" routerLinkActive="active" *ngIf="!logged">
+                <a class="nav-link" href="#/login" (click)="isCollapsed =true">
+                    <i class="fa fa-sign-in fa-fw" aria-hidden="true"></i>
+                    Login</a>
+            </li>
+            <li class="nav-item" routerLinkActive="active" *ngIf="logged">
+                <a class="nav-link" href="#" (click)="logout()">
+                    <i class="fa fa-sign-out fa-fw" aria-hidden="true"></i>
+                    Logout</a>
+            </li>
+        </ul>
+    </div>
+</nav> -->
+<toaster-container></toaster-container>
+<router-outlet></router-outlet>

@@ -106,7 +106,7 @@ public class UserServiceImpl implements UserService {
             if (res.succeeded()) {
                 getUser(new JsonObject().put("_id", res.result().principal().getString("_id")), mongoRes -> {
                     if (mongoRes.succeeded() && mongoRes.result() != null) {
-                        resultHandler.handle(Future.succeededFuture(new JsonObject().put("token", authUtils.getAuthProvider().generateToken(mongoRes.result(), new JWTOptions()))));
+                        resultHandler.handle(Future.succeededFuture(new JsonObject().put("token", authUtils.getAuthProvider().generateToken(new JsonObject().put("uid", res.result().principal().getString("_id")), new JWTOptions()))));
                     } else {
                         resultHandler.handle(Future.failedFuture(new BusinessException(mongoRes.cause(), 401)));
                     }

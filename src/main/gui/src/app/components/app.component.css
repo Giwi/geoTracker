@@ -1,0 +1,11 @@
+@media only screen and (max-width: 768px) {
+  .navbar-toggleable-md {
+    margin-top: 3rem;
+  }
+}
+.nav-item h5 {
+  color: #fff;
+  display: block;
+  padding-top: .425rem;
+  padding-bottom: .425rem;
+}

@@ -1,0 +1,21 @@
+<template ngbModalContainer></template>
+<div class="card-deck-wrapper">
+  <div class="card-deck">
+    <div class="col-md-4 col-sm-12" *ngFor="let u of users">
+      <div class="card">
+        <img src="../../../../assets/default_user.jpg" class="rounded-circle">
+        <h4 class="card-title">{{u.firstname}} {{u.name}}</h4>
+        <div class="card-text">
+          <span class="tag tag-pill tag-default" *ngFor="let r of u.roles">{{r | lowercase}}</span>
+        </div>
+        <div class="card-footer">
+          <a href="#/admin/user/edit/{{u.id}}" class="btn btn-secondary"><i class="fa fa-edit fa-fw"></i></a>
+          <button (click)="delete(u.id)" class="btn btn-danger"><i class="fa fa-trash fa-fw"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<nav class="fab-container">
+  <button class="fab-buttons btn-danger" tooltip="Ajouter" (click)="open()">+</button>
+</nav>

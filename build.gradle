@@ -19,7 +19,7 @@ apply plugin: 'com.github.ben-manes.versions'
 def generateSrcPath="$buildDir/generated-src"
 def generatedSrcDir = file("$buildDir/generated-src")
 def version = '3.4.1'
-mainClassName = 'com.qaobee.baab.Main'
+mainClassName = 'org.giwi.geotracker.Main'
 repositories {
     jcenter()
 }

@@ -30,7 +30,7 @@ public class APIRoute implements VertxRoute.Route {
                         .allowedMethod(HttpMethod.POST)
                         .allowedMethod(HttpMethod.PUT)
                         .allowedMethod(HttpMethod.DELETE)
-                        .allowedHeader("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept, X-secure-Token")
+                        .allowedHeader("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept, Authorization")
                 );
         router.route().path("/*").produces("application/json")
                 .handler(this::jsonHandler)

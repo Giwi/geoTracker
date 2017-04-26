@@ -6,6 +6,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
+import io.vertx.ext.web.handler.JWTAuthHandler;
 import org.giwi.geotracker.annotation.VertxRoute;
 import org.giwi.geotracker.beans.AuthUtils;
 import org.giwi.geotracker.beans.ResponseUtils;
@@ -30,6 +31,7 @@ public class UsersRoute implements VertxRoute.Route {
     @Override
     public Router init(Vertx vertx) {
         Router router = Router.router(vertx);
+        router.route("/*").handler(JWTAuthHandler.create(authUtils.getAuthProvider()));
         router.route().handler(BodyHandler.create());
         router.get("/logout").handler(this::logout);
         router.get("/").handler(this::getCurrentUser);
@@ -71,9 +73,10 @@ public class UsersRoute implements VertxRoute.Route {
      * @apiSuccess {Object} user User
      */
     private void getCurrentUser(RoutingContext context) {
-        authUtils.getClientFromToken(context.request(), res -> {
+        String uid = context.user().principal().getString("uid");
+        authUtils.getClientFromToken(uid, res -> {
             if (res.succeeded()) {
-                res.result().remove("secureToken");
+                res.result().remove("token");
                 res.result().remove("salt");
                 res.result().remove("password");
                 context.response().end(res.result().encode());
@@ -92,8 +95,9 @@ public class UsersRoute implements VertxRoute.Route {
      * @apiSuccess {Boolean} status Status
      */
     private void logout(RoutingContext context) {
-        authUtils.getClientFromToken(context.request(), res -> {
-            res.result().getJsonObject("account").remove("secureToken");
+        String uid = context.user().principal().getString("uid");
+        /*authUtils.getClientFromToken(uid, res -> {
+            res.result().getJsonObject("account").remove("token");
             userService.updateUser(res.result(), upd -> {
                 if (upd.succeeded()) {
                     responseUtils.sendStatus(context.response(), true);
@@ -101,6 +105,6 @@ public class UsersRoute implements VertxRoute.Route {
                     context.fail(new BusinessException(res.cause()));
                 }
             });
-        });
+        });*/
     }
 }

@@ -1,3 +1,5 @@
 .idea
 .gradle
 build
+src/main/gui/node_modules
+.vertx
