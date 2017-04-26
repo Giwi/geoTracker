@@ -3,7 +3,6 @@ package org.giwi.geotracker.routes.priv;
 import io.vertx.core.Vertx;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
-import io.vertx.ext.web.handler.BodyHandler;
 import org.giwi.geotracker.annotation.VertxRoute;
 import org.giwi.geotracker.beans.AuthUtils;
 import org.giwi.geotracker.exception.BusinessException;
@@ -30,7 +29,6 @@ public class ParamRoute implements VertxRoute.Route {
     @Override
     public Router init(Vertx vertx) {
         Router router = Router.router(vertx);
-        router.route().handler(BodyHandler.create());
         router.get("/roles").handler(this::getRoles);
         return router;
     }

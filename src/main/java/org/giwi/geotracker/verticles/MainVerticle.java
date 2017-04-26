@@ -42,6 +42,7 @@ public class MainVerticle extends AbstractVerticle {
                             mainRouter.mountSubRouter(item.getKey().rootPath(), item.getValue().init(vertx));
                         }
                 );
+        mainRouter.route("/*").handler(StaticHandler.create());
         mainRouter.route().last().handler(context ->
                 context.response()
                         .setStatusCode(404)
@@ -49,7 +50,6 @@ public class MainVerticle extends AbstractVerticle {
                                 .put("message", "This is not the service you're looking for")
                                 .encode())
         );
-        mainRouter.route("/*").handler(StaticHandler.create());
         server.requestHandler(mainRouter::accept).listen(8080);
     }
 /*

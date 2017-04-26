@@ -19,6 +19,7 @@ import {AuthenticationService} from "./services/authentication.service";
 import {UserService} from "./services/user.service";
 import {ApiService} from "./services/api.service";
 import {AppComponent} from "./components/app.component";
+import { PrivateHomeComponent } from './components/private-home/private-home.component';
 
 @NgModule({
     declarations: [
@@ -28,7 +29,8 @@ import {AppComponent} from "./components/app.component";
         SignupComponent,
         MainAdminComponent,
         UserListComponent,
-        UserAddComponent
+        UserAddComponent,
+        PrivateHomeComponent
     ],
     imports: [
         NgbModule.forRoot(),
@@ -43,9 +45,12 @@ import {AppComponent} from "./components/app.component";
                 path: 'signup', component: SignupComponent
             },
             {
+                path: 'home', component: PrivateHomeComponent, canActivate: [AuthGuard]
+            },
+            {
                 path: 'admin', component: MainAdminComponent, canActivate: [AuthGuard]
             }
-        ], {useHash: true}),
+        ], {useHash: false}),
         BrowserModule,
         FormsModule,
         HttpModule,
@@ -59,7 +64,8 @@ import {AppComponent} from "./components/app.component";
         EventsService,
         ParamService
     ],
-    bootstrap: [AppComponent]
+    bootstrap: [AppComponent],
+    entryComponents: [UserAddComponent]
 })
 export class AppModule {
 }

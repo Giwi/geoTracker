@@ -5,7 +5,6 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import org.giwi.geotracker.annotation.VertxRoute;
 import org.giwi.geotracker.beans.ResponseUtils;
-import org.giwi.geotracker.exception.BusinessException;
 import org.giwi.geotracker.services.UserService;
 
 import javax.inject.Inject;
@@ -44,7 +43,7 @@ public class UsersRoute implements VertxRoute.Route {
             if (res.succeeded()) {
                 context.response().end(res.result().encode());
             } else {
-                context.fail(new BusinessException(res.cause(), 401));
+                context.fail(res.cause());
             }
         });
     }
@@ -65,7 +64,7 @@ public class UsersRoute implements VertxRoute.Route {
             if (res.succeeded()) {
                 responseUtils.sendStatus(context.response(), true);
             } else {
-                context.fail(new BusinessException(res.cause()));
+                context.fail(res.cause());
             }
         });
     }

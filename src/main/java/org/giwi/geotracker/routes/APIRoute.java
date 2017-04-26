@@ -6,7 +6,10 @@ import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
+import io.vertx.ext.web.handler.CookieHandler;
 import io.vertx.ext.web.handler.CorsHandler;
+import io.vertx.ext.web.handler.SessionHandler;
+import io.vertx.ext.web.sstore.LocalSessionStore;
 import org.giwi.geotracker.annotation.VertxRoute;
 import org.giwi.geotracker.beans.ResponseUtils;
 
@@ -24,6 +27,8 @@ public class APIRoute implements VertxRoute.Route {
     public Router init(Vertx vertx) {
         Router router = Router.router(vertx);
         router.route().handler(BodyHandler.create());
+        router.route().handler(CookieHandler.create());
+        router.route().handler(SessionHandler.create(LocalSessionStore.create(vertx)));
         router.route().path("/*")
                 .handler(CorsHandler.create("*")
                         .allowedMethod(HttpMethod.GET)
@@ -34,7 +39,8 @@ public class APIRoute implements VertxRoute.Route {
                 );
         router.route().path("/*").produces("application/json")
                 .handler(this::jsonHandler)
-                .failureHandler(responseUtils::failureHandler);
+              //  .failureHandler(responseUtils::failureHandler);
+        ;
         return router;
     }
 

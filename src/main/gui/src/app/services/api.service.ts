@@ -48,6 +48,12 @@ export class ApiService {
     if(error.status === 401) {
       this.authenticationService.logout();
       this.router.navigate(['/login']);
+      return;
+    }
+    if(error.status === 403) {
+      this.toasterService.pop('error', 'Restricted area', 'You can not access this area');
+      this.router.navigate(['/home']);
+      return;
     }
     let errMsg = (error.message) ? error.message : error.status ? error.statusText : 'Server error';
     console.error(error); // log to console instead

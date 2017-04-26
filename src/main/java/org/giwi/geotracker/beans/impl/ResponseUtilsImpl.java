@@ -40,7 +40,7 @@ public class ResponseUtilsImpl implements ResponseUtils {
         if (context.failure() != null) {
             context.failure().printStackTrace();
         }
-        BusinessException exception = (BusinessException) context.failure();
+        BusinessException exception = new BusinessException(context.failure());
         final JsonObject error = new JsonObject()
                 .put("timestamp", System.nanoTime())
                 .put("status", exception.getStatusCode())
@@ -48,7 +48,7 @@ public class ResponseUtilsImpl implements ResponseUtils {
                 .put("path", context.normalisedPath())
                 .put("exception", exception.getClass().getName());
 
-        if (exception.getCause().getMessage() != null) {
+        if (exception.getCause() != null && exception.getCause().getMessage() != null) {
             error.put("message", exception.getCause().getMessage());
             context.response().setStatusMessage(exception.getCause().getMessage());
         }

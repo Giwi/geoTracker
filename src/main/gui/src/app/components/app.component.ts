@@ -51,6 +51,15 @@ export class AppComponent implements OnInit {
 
     /**
      *
+     * @param role
+     * @returns {User|boolean}
+     */
+    hasPermission(role: string): boolean {
+        return this.user && this.user.permissions.some(i => i === role);
+    }
+
+    /**
+     *
      */
     logout() {
         this.isCollapsed = true;

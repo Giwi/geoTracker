@@ -76,8 +76,8 @@ public class UserServiceImpl implements UserService {
         utils.testMandatoryFields(user, mongoAuth.getPasswordField(), mongoAuth.getUsernameField(), "name", "firstname");
         mongoAuth.insertUser(user.getString(mongoAuth.getUsernameField()),
                 user.getString(mongoAuth.getPasswordField()),
-                Collections.singletonList(Roles.DAF.name()),
                 new ArrayList<>(),
+                Collections.singletonList(Roles.user.name()),
                 res -> {
                     if (res.succeeded()) {
                         user.put("_id", res.result());
@@ -106,13 +106,21 @@ public class UserServiceImpl implements UserService {
             if (res.succeeded()) {
                 getUser(new JsonObject().put("_id", res.result().principal().getString("_id")), mongoRes -> {
                     if (mongoRes.succeeded() && mongoRes.result() != null) {
-                        resultHandler.handle(Future.succeededFuture(new JsonObject().put("token", authUtils.getAuthProvider().generateToken(new JsonObject().put("uid", res.result().principal().getString("_id")), new JWTOptions()))));
+                        List<String> authorities = new ArrayList<>();
+                        mongoRes.result().getJsonArray("permissions").forEach(p -> authorities.add((String) p));
+
+                        resultHandler.handle(Future.succeededFuture(new JsonObject()
+                                .put("token", authUtils.getAuthProvider().generateToken(
+                                        new JsonObject().put("uid", res.result().principal().getString("_id")),
+                                        new JWTOptions().setPermissions(authorities)
+                                ))
+                        ));
                     } else {
-                        resultHandler.handle(Future.failedFuture(new BusinessException(mongoRes.cause(), 401)));
+                        resultHandler.handle(Future.failedFuture(mongoRes.cause()));
                     }
                 });
             } else {
-                resultHandler.handle(Future.failedFuture(new BusinessException(res.cause(), 401)));
+                resultHandler.handle(Future.failedFuture(res.cause()));
             }
         });
     }

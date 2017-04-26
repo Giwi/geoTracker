@@ -5,12 +5,10 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
-import io.vertx.ext.web.handler.BodyHandler;
+import io.vertx.ext.web.handler.AuthHandler;
 import io.vertx.ext.web.handler.JWTAuthHandler;
 import org.giwi.geotracker.annotation.VertxRoute;
 import org.giwi.geotracker.beans.AuthUtils;
-import org.giwi.geotracker.beans.ResponseUtils;
-import org.giwi.geotracker.exception.BusinessException;
 import org.giwi.geotracker.services.UserService;
 
 import javax.inject.Inject;
@@ -24,17 +22,18 @@ public class UsersRoute implements VertxRoute.Route {
     @Inject
     private AuthUtils authUtils;
     @Inject
-    private ResponseUtils responseUtils;
-    @Inject
     private UserService userService;
 
     @Override
     public Router init(Vertx vertx) {
+        AuthHandler adminHandler = JWTAuthHandler.create(authUtils.getAuthProvider());
+        adminHandler.addAuthority("admin");
+
         Router router = Router.router(vertx);
         router.route("/*").handler(JWTAuthHandler.create(authUtils.getAuthProvider()));
-        router.route().handler(BodyHandler.create());
         router.get("/logout").handler(this::logout);
         router.get("/").handler(this::getCurrentUser);
+        router.get("/all").handler(adminHandler);
         router.get("/all").handler(this::getUserList);
         return router;
     }
@@ -44,7 +43,6 @@ public class UsersRoute implements VertxRoute.Route {
      * @apiName getUserList
      * @apiGroup Users
      * @apiDescription Get User list
-     * @apiHeader {String} secureToken User secureToken
      * @apiSuccess {Array} user User[]
      */
     private void getUserList(RoutingContext context) {
@@ -54,12 +52,11 @@ public class UsersRoute implements VertxRoute.Route {
                 res.result().forEach(u -> {
                     u.remove("password");
                     u.remove("salt");
-                    u.remove("secureToken");
                     jar.add(u);
                 });
                 context.response().end(jar.encode());
             } else {
-                context.fail(new BusinessException(res.cause()));
+                context.fail(res.cause());
             }
         });
     }
@@ -69,19 +66,17 @@ public class UsersRoute implements VertxRoute.Route {
      * @apiName getCurrentUser
      * @apiGroup Users
      * @apiDescription Get the current logged user
-     * @apiHeader {String} secureToken User secureToken
      * @apiSuccess {Object} user User
      */
     private void getCurrentUser(RoutingContext context) {
         String uid = context.user().principal().getString("uid");
         authUtils.getClientFromToken(uid, res -> {
             if (res.succeeded()) {
-                res.result().remove("token");
                 res.result().remove("salt");
                 res.result().remove("password");
                 context.response().end(res.result().encode());
             } else {
-                context.fail(new BusinessException(res.cause()));
+                context.fail(res.cause());
             }
         });
     }
@@ -91,20 +86,9 @@ public class UsersRoute implements VertxRoute.Route {
      * @apiName logout
      * @apiGroup Users
      * @apiDescription Logout the user
-     * @apiHeader {String} secureToken User secureToken
      * @apiSuccess {Boolean} status Status
      */
     private void logout(RoutingContext context) {
         String uid = context.user().principal().getString("uid");
-        /*authUtils.getClientFromToken(uid, res -> {
-            res.result().getJsonObject("account").remove("token");
-            userService.updateUser(res.result(), upd -> {
-                if (upd.succeeded()) {
-                    responseUtils.sendStatus(context.response(), true);
-                } else {
-                    context.fail(new BusinessException(res.cause()));
-                }
-            });
-        });*/
     }
 }
